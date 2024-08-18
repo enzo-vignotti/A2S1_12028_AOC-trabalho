@@ -1,0 +1,22 @@
+Até dia 24/08/2024
+- Escrever o algoritimo da ordenação por seleção em Assembly (Matheus)
+
+- Escrever o algoritmo do método de Newton-rapson em Assembly (enzo vai tentar primeiro)
+
+- Implementar as instruções do IAS como funções 
+    >> Criar os registradores;
+
+Até dia 07/09/2024
+- Implementar a "lógica" do IAS (enzo vai ir tentando)
+
+0x00 - 2
+0x01 - 3
+0x02 - 5
+
+LOAD(0x00)
+>> AC = 2
+ADD(0x01) (AC + mem(0x01) -> AC)
+>> AC = 5
+STOR(0x02)
+
+
