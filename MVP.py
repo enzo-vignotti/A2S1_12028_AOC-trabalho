@@ -61,6 +61,7 @@ class Processador():
         self.PC = 0
         self.AC = 0
         self.MAR = 0
+        self.MQ = 0
         self.MBR = 0
         self.IR = '0|0'
         self.IBR = '0|0'
@@ -81,6 +82,7 @@ class Processador():
         print('--------------------------------------------------')
         print(f'PC  | {self.PC}')
         print(f'MAR | {self.MAR}')
+        print(f'MQ  | {self.MQ}')
         print(f'AC  | {self.AC}')
         print(f'MBR | {self.MBR}')
         print(f'IR  | {self.IR}')
@@ -147,6 +149,14 @@ class UC():
                     self.PROC.mostrarRegistradores()
                     CLOCK += 1
 
+            case 'LOADMQM':
+                self.PROC.MAR = self.PROC.IRendereco()
+                CLOCK += 1
+                self.PROC.MBR = RAM.leRAM(self.PROC.MAR)
+                CLOCK += 1
+                self.PROC.MQ = self.PROC.MBR
+                CLOCK += 1
+
             case 'STORM':
                 entry = input('ENTER para continuar').upper()
                 if (entry == ""):
@@ -180,23 +190,11 @@ class UC():
                     CLOCK += 1
 
                 entry = input('ENTER para continuar').upper()
-                if (entry == ""):                
-                    self.PROC.IBR = self.PROC.MBR
-                    self.PROC.mostrarRegistradores()
-                    CLOCK += 1
-
-                entry = input('ENTER para continuar').upper()
                 if (entry == ""):
-                    conteudo = self.PROC.IBR.split(sep='|')
+                    conteudo = self.PROC.MBR.split(sep='|')
                     conteudo[1] = int_to_hex(self.PROC.AC)
                     buffer = '|'.join(conteudo)
-                    self.PROC.IBR = buffer
-                    self.PROC.mostrarRegistradores()
-                    CLOCK += 1
-
-                entry = input('ENTER para continuar').upper()
-                if (entry == ""):
-                    self.PROC.MBR = self.PROC.IBR
+                    self.PROC.MBR = buffer
                     self.PROC.mostrarRegistradores()
                     CLOCK += 1
 
@@ -242,6 +240,14 @@ class UC():
                     self.PROC.AC -= self.PROC.MBR
                     self.PROC.mostrarRegistradores()
                     CLOCK += 1
+
+            case 'MULM':
+                self.PROC.MAR = self.PROC.IRendereco()
+                CLOCK += 1
+                self.PROC.MBR = RAM.leRAM(self.PROC.MAR)
+                CLOCK += 1
+                self.PROC.AC = self.PROC.MBR * self.PROC.MQ
+                CLOCK += 1
 
             case 'JUMPM':
                 entry = input('ENTER para continuar').upper()
@@ -373,16 +379,14 @@ def main():
     fim = False
     i = 0
     entry = ''
+    entry = input('ENTER para continuar')
     while not fim and (entry == ''):
-        entry = input('ENTER para continuar')
         if (entry == ''):
             CLOCK += 1
             instrucao = PROC.UnidadeControle.cicloBusca(memRAM)
-
-        entry = input('ENTER para continuar')
-        if (entry == ''):
             fim = PROC.UnidadeControle.cicloExecucao(memRAM, instrucao) 
         i += 1
+        entry = input('ENTER para continuar')
     memRAM.mostraConteudo()
     print(f'I = {i}')
 

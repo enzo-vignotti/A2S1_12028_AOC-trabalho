@@ -3,8 +3,8 @@ from dataclasses import dataclass
 # define o número de palavras que cabem na memória RAM
 # e o tamanho de cada segmento da RAM
 
-arquivoInstrucoes = 'instrucoes3.txt'
-enderecoInicial = 20
+arquivoInstrucoes = 'termoGeralPGInstrucoes.txt'
+enderecoInicial = 15
 CLOCK = 0
 
 def processaLinha(linha : str):
@@ -60,10 +60,10 @@ class Processador():
     def __init__(self):
         self.PC = 0
         self.AC = 0
+        self.MQ = 0
         self.MAR = 0
         self.MBR = 0
         self.IR = '0|0'
-        self.IBR = '0|0'
         self.UnidadeControle = UC(self)
 
     def IRendereco(self):
@@ -81,10 +81,10 @@ class Processador():
         print('--------------------------------------------------')
         print(f'PC  | {self.PC}')
         print(f'MAR | {self.MAR}')
+        print(f'MQ  | {self.MQ}')
         print(f'AC  | {self.AC}')
         print(f'MBR | {self.MBR}')
         print(f'IR  | {self.IR}')
-        print(f'IBR | {self.IBR}')
         print('--------------------------------------------------\n')
 
 
@@ -119,45 +119,39 @@ class UC():
         # print(f'INSTRUCÃO = {instrucao}')
         match instrucao:
             case 'LOADM':
- 
                 self.PROC.MAR = self.PROC.IRendereco()
                 CLOCK += 1
-
-
                 self.PROC.MBR = RAM.leRAM(self.PROC.MAR)
                 CLOCK += 1
-
-
                 self.PROC.AC = self.PROC.MBR
+                CLOCK += 1
+
+            case 'LOADMQM':
+                self.PROC.MAR = self.PROC.IRendereco()
+                CLOCK += 1
+                self.PROC.MBR = RAM.leRAM(self.PROC.MAR)
+                CLOCK += 1
+                self.PROC.MQ = self.PROC.MBR
                 CLOCK += 1
 
             case 'STORM':
                 self.PROC.MBR = self.PROC.AC
                 CLOCK += 1
-            
                 self.PROC.MAR = self.PROC.IRendereco()
                 CLOCK += 1
-
                 RAM.escreveRAM(self.PROC.MAR, self.PROC.MBR)
                 CLOCK += 1
 
             case 'STORMR':                
                 self.PROC.MAR = self.PROC.IRendereco()
                 CLOCK += 1
-            
                 self.PROC.MBR = RAM.leRAM(self.PROC.MAR)
                 CLOCK += 1
-            
-                self.PROC.IBR = self.PROC.MBR
-                CLOCK += 1
 
-                conteudo = self.PROC.IBR.split(sep='|')
+                conteudo = self.PROC.MBR.split(sep='|')
                 conteudo[1] = int_to_hex(self.PROC.AC)
                 buffer = '|'.join(conteudo)
-                self.PROC.IBR = buffer
-                CLOCK += 1
-
-                self.PROC.MBR = self.PROC.IBR
+                self.PROC.MBR = buffer
                 CLOCK += 1
                 
                 RAM.escreveRAM(self.PROC.MAR, self.PROC.MBR)
@@ -180,6 +174,14 @@ class UC():
                 self.PROC.MBR = RAM.leRAM(self.PROC.MAR)
                 CLOCK += 1                    
                 self.PROC.AC -= self.PROC.MBR
+                CLOCK += 1
+
+            case 'MULM':
+                self.PROC.MAR = self.PROC.IRendereco()
+                CLOCK += 1
+                self.PROC.MBR = RAM.leRAM(self.PROC.MAR)
+                CLOCK += 1
+                self.PROC.AC = self.PROC.MBR * self.PROC.MQ
                 CLOCK += 1
 
             case 'JUMPM':
