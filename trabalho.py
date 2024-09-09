@@ -26,8 +26,8 @@ import sys
 # JUMP M(X,20:39) | Salta para o local de M(X) e recupera sua instrução direita
 
 # Conditional branch
-# JUMP+ M(X,0:19)  | Se AC <= 0, JUMP M(X,0:19)
-# JUMP+ M(X,20:39) | Se AC <= 0, JUMP M(X,20:39)
+# JUMP+ M(X,0:19)  | Se AC >= 0, JUMP M(X,0:19)
+# JUMP+ M(X,20:39) | Se AC >= 0, JUMP M(X,20:39)
 
 # Arithmetic
 # ADD M(X)   | AC <- AC + mem(X)

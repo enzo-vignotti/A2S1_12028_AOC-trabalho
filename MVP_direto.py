@@ -99,26 +99,16 @@ class UC():
         global CLOCK
 
         self.PROC.MAR = self.PROC.PC
-        self.PROC.mostrarRegistradores()
         CLOCK += 1
 
-        entry = input('ENTER para continuar').upper()
-        if (entry == ""):
-            self.PROC.MBR = RAM.leRAM(self.PROC.MAR)
-            self.PROC.mostrarRegistradores()
-            CLOCK += 1
-        else:
-            exit()
-
-        entry = input('ENTER para continuar').upper()
-        if (entry == ""):        
-            self.PROC.PC += 1
-            self.PROC.IR = self.PROC.MBR
-            self.PROC.IBR = '0|0'
-            self.PROC.mostrarRegistradores()
-            CLOCK += 1
-        else:
-            exit()            
+        self.PROC.MBR = RAM.leRAM(self.PROC.MAR)
+        CLOCK += 1
+    
+        self.PROC.PC += 1
+        self.PROC.IR = self.PROC.MBR
+        self.PROC.IBR = '0|0'
+        CLOCK += 1
+          
         return self.PROC.IRinstrucao()
 
     def cicloExecucao(self, RAM : RAM, instrucao : str):
@@ -129,134 +119,77 @@ class UC():
         # print(f'INSTRUCÃO = {instrucao}')
         match instrucao:
             case 'LOADM':
-                entry = input('ENTER para continuar').upper()
-                if (entry == ""): 
-                    self.PROC.MAR = self.PROC.IRendereco()
-                    self.PROC.mostrarRegistradores()
-                    CLOCK += 1
+ 
+                self.PROC.MAR = self.PROC.IRendereco()
+                CLOCK += 1
 
-                entry = input('ENTER para continuar').upper()
-                if (entry == ""): 
-                    self.PROC.MBR = RAM.leRAM(self.PROC.MAR)
-                    self.PROC.mostrarRegistradores()
-                    CLOCK += 1
 
-                entry = input('ENTER para continuar').upper()
-                if (entry == ""): 
-                    self.PROC.AC = self.PROC.MBR
-                    self.PROC.mostrarRegistradores()
-                    CLOCK += 1
+                self.PROC.MBR = RAM.leRAM(self.PROC.MAR)
+                CLOCK += 1
+
+
+                self.PROC.AC = self.PROC.MBR
+                CLOCK += 1
 
             case 'STORM':
-                entry = input('ENTER para continuar').upper()
-                if (entry == ""):
-                    self.PROC.MBR = self.PROC.AC
-                    self.PROC.mostrarRegistradores()
-                    CLOCK += 1
+                self.PROC.MBR = self.PROC.AC
+                CLOCK += 1
+            
+                self.PROC.MAR = self.PROC.IRendereco()
+                CLOCK += 1
 
-                entry = input('ENTER para continuar').upper()
-                if (entry == ""):                
-                    self.PROC.MAR = self.PROC.IRendereco()
-                    self.PROC.mostrarRegistradores()
-                    CLOCK += 1
+                RAM.escreveRAM(self.PROC.MAR, self.PROC.MBR)
+                CLOCK += 1
 
-                entry = input('ENTER para continuar').upper()
-                if (entry == ""):
-                    RAM.escreveRAM(self.PROC.MAR, self.PROC.MBR)
-                    self.PROC.mostrarRegistradores()
-                    CLOCK += 1
+            case 'STORMR':                
+                self.PROC.MAR = self.PROC.IRendereco()
+                CLOCK += 1
+            
+                self.PROC.MBR = RAM.leRAM(self.PROC.MAR)
+                CLOCK += 1
+            
+                self.PROC.IBR = self.PROC.MBR
+                CLOCK += 1
 
-            case 'STORMR':
-                entry = input('ENTER para continuar').upper()
-                if (entry == ""):                
-                    self.PROC.MAR = self.PROC.IRendereco()
-                    self.PROC.mostrarRegistradores()
-                    CLOCK += 1
+                conteudo = self.PROC.IBR.split(sep='|')
+                conteudo[1] = int_to_hex(self.PROC.AC)
+                buffer = '|'.join(conteudo)
+                self.PROC.IBR = buffer
+                CLOCK += 1
 
-                entry = input('ENTER para continuar').upper()
-                if (entry == ""):                
-                    self.PROC.MBR = RAM.leRAM(self.PROC.MAR)
-                    self.PROC.mostrarRegistradores()
-                    CLOCK += 1
+                self.PROC.MBR = self.PROC.IBR
+                CLOCK += 1
+                
+                RAM.escreveRAM(self.PROC.MAR, self.PROC.MBR)
+                CLOCK += 1
 
-                entry = input('ENTER para continuar').upper()
-                if (entry == ""):                
-                    self.PROC.IBR = self.PROC.MBR
-                    self.PROC.mostrarRegistradores()
-                    CLOCK += 1
+            case 'ADDM':                
+                self.PROC.MAR = self.PROC.IRendereco()
+                CLOCK += 1
 
-                entry = input('ENTER para continuar').upper()
-                if (entry == ""):
-                    conteudo = self.PROC.IBR.split(sep='|')
-                    conteudo[1] = int_to_hex(self.PROC.AC)
-                    buffer = '|'.join(conteudo)
-                    self.PROC.IBR = buffer
-                    self.PROC.mostrarRegistradores()
-                    CLOCK += 1
+                self.PROC.MBR = RAM.leRAM(self.PROC.MAR)
+                CLOCK += 1
 
-                entry = input('ENTER para continuar').upper()
-                if (entry == ""):
-                    self.PROC.MBR = self.PROC.IBR
-                    self.PROC.mostrarRegistradores()
-                    CLOCK += 1
-
-                entry = input('ENTER para continuar').upper()
-                if (entry == ""):                    
-                    RAM.escreveRAM(self.PROC.MAR, self.PROC.MBR)
-                    self.PROC.mostrarRegistradores()
-                    CLOCK += 1
-
-            case 'ADDM':
-                entry = input('ENTER para continuar').upper()
-                if (entry == ""):                
-                    self.PROC.MAR = self.PROC.IRendereco()
-                    self.PROC.mostrarRegistradores()
-                    CLOCK += 1
-
-                entry = input('ENTER para continuar').upper()
-                if (entry == ""):
-                    self.PROC.MBR = RAM.leRAM(self.PROC.MAR)
-                    self.PROC.mostrarRegistradores()
-                    CLOCK += 1
-
-                entry = input('ENTER para continuar').upper()
-                if (entry == ""):
-                    self.PROC.AC += self.PROC.MBR
-                    self.PROC.mostrarRegistradores()
-                    CLOCK += 1
+                self.PROC.AC += self.PROC.MBR
+                CLOCK += 1
 
 
             case 'SUBM':
-                entry = input('ENTER para continuar').upper()
-                if (entry == ""):
-                    self.PROC.MAR = self.PROC.IRendereco()
-                    self.PROC.mostrarRegistradores()
-                    CLOCK += 1                    
-                entry = input('ENTER para continuar').upper()
-                if (entry == ""):
-                    self.PROC.MBR = RAM.leRAM(self.PROC.MAR)
-                    self.PROC.mostrarRegistradores()
-                    CLOCK += 1                    
-                entry = input('ENTER para continuar').upper()
-                if (entry == ""):
-                    self.PROC.AC -= self.PROC.MBR
-                    self.PROC.mostrarRegistradores()
-                    CLOCK += 1
+                self.PROC.MAR = self.PROC.IRendereco()
+                CLOCK += 1                    
+                self.PROC.MBR = RAM.leRAM(self.PROC.MAR)
+                CLOCK += 1                    
+                self.PROC.AC -= self.PROC.MBR
+                CLOCK += 1
 
             case 'JUMPM':
-                entry = input('ENTER para continuar').upper()
-                if (entry == ""):
-                    self.PROC.PC = self.PROC.IRendereco()
-                    self.PROC.mostrarRegistradores()
-                    CLOCK += 1
+                self.PROC.PC = self.PROC.IRendereco()
+                CLOCK += 1
 
             case 'JUMP+M':
-                entry = input('ENTER para continuar').upper()
-                if (entry == ""):
-                    if self.PROC.AC >= 0:
-                        self.PROC.PC = self.PROC.IRendereco()
-                    self.PROC.mostrarRegistradores()
-                    CLOCK += 1
+                if self.PROC.AC >= 0:
+                    self.PROC.PC = self.PROC.IRendereco()
+                CLOCK += 1
 
             case 'END':
                 fim = True
@@ -372,19 +305,13 @@ def main():
 
     fim = False
     i = 0
-    entry = ''
-    while not fim and (entry == ''):
-        entry = input('ENTER para continuar')
-        if (entry == ''):
-            CLOCK += 1
-            instrucao = PROC.UnidadeControle.cicloBusca(memRAM)
+    while not fim:
+        CLOCK += 1
+        instrucao = PROC.UnidadeControle.cicloBusca(memRAM)
 
-        entry = input('ENTER para continuar')
-        if (entry == ''):
-            fim = PROC.UnidadeControle.cicloExecucao(memRAM, instrucao) 
+        fim = PROC.UnidadeControle.cicloExecucao(memRAM, instrucao) 
         i += 1
     memRAM.mostraConteudo()
-    print(f'I = {i}')
 
 main()
 
